@@ -1,0 +1,35 @@
+[project]
+name = "cone-search"
+description = "Experimental OpenAPI definition for cone search"
+license = { file = "LICENSE" }
+readme = "README.md"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: POSIX",
+    "Typing :: Typed",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "click",
+    "fastapi",
+    "pydantic",
+    "uvicorn",
+]
+dynamic = ["version"]
+
+[build-system]
+requires = ["setuptools>=61", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project.scripts]
+cone-search = "conesearch.cli:main"
+
+[tool.setuptools_scm]
+root = ".."

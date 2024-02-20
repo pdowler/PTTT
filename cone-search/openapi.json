@@ -1,0 +1,186 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "cone-search",
+    "description": "Experimental OpenAPI definition for cone search",
+    "version": "0.1.dev1+g23df06d.d20240220"
+  },
+  "paths": {
+    "/cone-search": {
+      "get": {
+        "summary": "Cone search",
+        "description": "Perform a simple cone search",
+        "operationId": "search_sync_cone_search_get",
+        "parameters": [
+          {
+            "name": "ra",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Right-ascension",
+              "description": "A right-ascension in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees",
+              "examples": [
+                179.5
+              ]
+            },
+            "description": "A right-ascension in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees"
+          },
+          {
+            "name": "dec",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Declination",
+              "description": "A declination in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees",
+              "examples": [
+                59.98
+              ]
+            },
+            "description": "A declination in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees"
+          },
+          {
+            "name": "sr",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Search radius",
+              "description": "The radius of the cone to search, given in decimal degrees",
+              "examples": [
+                0.5
+              ]
+            },
+            "description": "The radius of the cone to search, given in decimal degrees"
+          },
+          {
+            "name": "verb",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Verbosity"
+                }
+              ],
+              "title": "Verbosity",
+              "description": "Choose from `minimum` (minimum columns required to describe the object), `all` (all available columns), or `default` (a useful intermediate number of columns)",
+              "examples": [
+                "all"
+              ],
+              "default": "default"
+            },
+            "description": "Choose from `minimum` (minimum columns required to describe the object), `all` (all available columns), or `default` (a useful intermediate number of columns)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/xml;content=x-votable": {
+                "example": "\n<?xml version=\"1.0\"?>\n<!DOCTYPE VOTABLE SYSTEM \"http://us-vo.org/xml/VOTable.dtd\">\n<VOTABLE version=\"1.0\">\n  <DEFINITIONS>\n    <COOSYS system=\"eq_FK5\" equinox=\"2000\" />\n  </DEFINITIONS>\n    \n  <RESOURCE ID=\"T9001\">\n     <DESCRIPTION>\n       HEASARC Browse data service\n       Please send inquiries to mailto:request@athena.gsfc.nasa.gov\n    </DESCRIPTION>\n    <PARAM ID=\"default_search_radius\" ucd=\"OBS_ANG-SIZE\" datatype=\"double\" \n           value=\"0.0516666666666667\" />\n\n    <TABLE ID=\"heasarc_first_9001\">\n      <DESCRIPTION> Faint Images of the Radio Sky at Twenty cm Source Catalog (FIRST) </DESCRIPTION>\n      \n      <FIELD name=\"unique_id\" datatype=\"char\" arraysize=\"*\"  ucd=\"ID_MAIN\">\n        <DESCRIPTION> Integer key </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"name\" datatype=\"char\" arraysize=\"*\"  >\n        <DESCRIPTION> FIRST Source Designation </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"ra\" datatype=\"double\" unit=\"degree\" ucd=\"POS_EQ_RA_MAIN\">\n        <DESCRIPTION> Right Ascension </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"dec\" datatype=\"double\" unit=\"degree\" ucd=\"POS_EQ_DEC_MAIN\">\n        <DESCRIPTION> Declination </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"flux_20_cm\" datatype=\"double\" unit=\"mJy\" >\n        <DESCRIPTION> Peak 1.4GHz Flux Density (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"flux_20_cm_error\" datatype=\"double\" unit=\"mJy\" >\n        <DESCRIPTION> Estimated rms in at Source (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"int_flux_20_cm\" datatype=\"double\" unit=\"mJy\" >\n\n        <DESCRIPTION> Integrated 1.4GHz Flux Density (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <DATA>\n        <TABLEDATA>\n<TR>\n  <TD>384559</TD><TD>FIRST J120002.6+595708</TD>\n  <TD>180.0110042</TD><TD>59.9523889</TD>\n  <TD>    1.11</TD><TD> 0.139</TD><TD>    1.14</TD>\n</TR>\n<TR>\n  <TD>385094</TD><TD>FIRST J120025.3+600103</TD>\n  <TD>180.1057250</TD><TD>60.0175556</TD>\n  <TD>    2.89</TD><TD> 0.142</TD><TD>    2.56</TD>\n</TR>\n<TR>\n  <TD>384928</TD><TD>FIRST J120018.1+600236</TD>\n  <TD>180.0755500</TD><TD>60.0434750</TD>\n  <TD>   19.38</TD><TD> 0.145</TD><TD>   19.23</TD>\n</TR>\n<TR>\n  <TD>384490</TD><TD>FIRST J115959.4+600403</TD>\n  <TD>179.9978875</TD><TD>60.0677083</TD>\n  <TD>    1.01</TD><TD> 0.147</TD><TD>    1.20</TD>\n</TR>\n        </TABLEDATA>\n      </DATA>\n    </TABLE>\n\n  </RESOURCE>\n</VOTABLE>\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Search Out of Range",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid Parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorDetail": {
+        "properties": {
+          "loc": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "examples": [
+              [
+                "area",
+                "field"
+              ]
+            ]
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message",
+            "examples": [
+              "Some error messge"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "title": "Error type",
+            "examples": [
+              "some_code"
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "msg",
+          "type"
+        ],
+        "title": "ErrorDetail",
+        "description": "The detail of the error message."
+      },
+      "ErrorModel": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            },
+            "type": "array",
+            "title": "Error detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorModel",
+        "description": "A structured API error message."
+      },
+      "Verbosity": {
+        "type": "string",
+        "enum": [
+          "minimum",
+          "default",
+          "all"
+        ],
+        "title": "Verbosity",
+        "description": "Levels of verbosity in a simple cone search response."
+      }
+    }
+  }
+}
