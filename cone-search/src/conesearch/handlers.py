@@ -1,10 +1,22 @@
 """Public API to a hypothetical simple cone search service."""
 
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Response, Query
+from fastapi.responses import RedirectResponse
 
-from .models import Verbosity, ErrorModel
+from .models import (
+    ConeSearchParameters,
+    ErrorModel,
+    ExecutionPhase,
+    Job,
+    JobCreate,
+    JobDescription,
+    JobStart,
+    JobUpdate,
+    Verbosity,
+)
 
 __all__ = ["router"]
 
@@ -154,4 +166,135 @@ async def search_sync(
         )
     ] = Verbosity.DEFAULT,
 ) -> Response:
+    ...
+
+
+@router.post(
+    "",
+    description="Perform a simple cone search",
+    response_class=Response,
+    responses={
+        200: {
+            "content": {
+                "text/xml;content=x-votable": {"example": _EXAMPLE_RESPONSE},
+            }
+        },
+        400: {"description": "Search Out of Range", "model": ErrorModel},
+        422: {"description": "Invalid Parameters", "model": ErrorModel},
+    },
+    summary="Cone search",
+)
+async def search_sync(params: ConeSearchParameters) -> Response:
+    ...
+
+
+@router.get(
+    "/jobs",
+    description=(
+        "List all existing jobs for the current user. Jobs will be sorted"
+        " by creation date, with the most recently created listed first."
+    ),
+    response_model=list[JobDescription],
+    response_model_exclude_none=True,
+    summary="Cone search job list",
+)
+async def get_job_list(
+    phase: Annotated[
+        list[ExecutionPhase] | None,
+        Query(
+            title="Execution phase",
+            description="Limit results to the provided execution phases",
+        )
+    ] = None,
+    after: Annotated[
+        datetime | None,
+        Query(
+            title="Creation date",
+            description="Limit results to jobs created after this date",
+        ),
+    ] = None,
+    last: Annotated[
+        int | None,
+        Query(
+            title="Number of jobs",
+            description="Return at most the given number of jobs",
+        ),
+    ] = None,
+) -> list[JobDescription]:
+    ...
+
+
+@router.post(
+    "/jobs",
+    response_class=RedirectResponse,
+    status_code=303,
+    summary="Create async cone search job",
+)
+async def create_job(create: JobCreate[ConeSearchParameters]) -> str:
+    ...
+
+
+@router.get(
+    "/jobs/{job_id}",
+    response_model=Job[ConeSearchParameters],
+    response_model_exclude_none=True,
+    summary="Cone search job details",
+)
+async def get_job(
+    job_id: str,
+    wait: Annotated[
+        int,
+        Query(
+            title="Wait for status changes",
+            description=(
+                "Maximum number of seconds to wait or -1 to wait for as long"
+                " as the server permits"
+            ),
+            examples=[-1, 60]
+        ),
+    ],
+    phase: Annotated[
+        ExecutionPhase,
+        Query(
+            title="Initial phase for waiting",
+            description=(
+                "When waiting for status changes, consider this to be the"
+                " initial execution phase. If the phase has already changed,"
+                " return immediately. This parameter should always be provided"
+                " when wait is used."
+            ),
+            examples=[ExecutionPhase.EXECUTING],
+        ),
+    ]
+) -> Job[ConeSearchParameters]:
+    ...
+
+
+@router.delete(
+    "/jobs/{job_id}",
+    status_code=204,
+    summary="Delete a cone search job",
+)
+async def delete_job(job_id: str) -> None:
+    ...
+
+
+@router.patch(
+    "/jobs/{job_id}",
+    status_code=200,
+    response_model=Job[ConeSearchParameters],
+    response_model_exclude_none=True,
+    summary="Update a cone search job",
+)
+async def patch_job(job_id: str, update: JobUpdate) -> Job:
+    ...
+
+
+@router.post(
+    "/jobs/{job_id}/start",
+    response_class=RedirectResponse,
+    status_code=303,
+    summary="Start a cone search job",
+)
+async def job_start(job_id: str, start: JobStart) -> str:
     ...
