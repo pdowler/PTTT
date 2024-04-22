@@ -1,0 +1,901 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "cone-search",
+    "description": "Experimental OpenAPI definition for cone search",
+    "version": "0.1.dev1+g23df06d.d20240220"
+  },
+  "paths": {
+    "/cone-search": {
+      "get": {
+        "summary": "Cone search",
+        "description": "Perform a simple cone search",
+        "operationId": "search_sync_cone_search_get",
+        "parameters": [
+          {
+            "name": "ra",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Right-ascension",
+              "description": "A right-ascension in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees",
+              "example": 179.5
+            },
+            "description": "A right-ascension in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees"
+          },
+          {
+            "name": "dec",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Declination",
+              "description": "A declination in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees",
+              "example": 59.98
+            },
+            "description": "A declination in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees"
+          },
+          {
+            "name": "sr",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "title": "Search radius",
+              "description": "The radius of the cone to search, given in decimal degrees",
+              "example": 0.5
+            },
+            "description": "The radius of the cone to search, given in decimal degrees"
+          },
+          {
+            "name": "verb",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Verbosity"
+                }
+              ],
+              "title": "Verbosity",
+              "description": "Choose from `minimum` (minimum columns required to describe the object), `all` (all available columns), or `default` (a useful intermediate number of columns)",
+              "example": "all",
+              "default": "default"
+            },
+            "description": "Choose from `minimum` (minimum columns required to describe the object), `all` (all available columns), or `default` (a useful intermediate number of columns)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/xml;content=x-votable": {
+                "example": "\n<?xml version=\"1.0\"?>\n<!DOCTYPE VOTABLE SYSTEM \"http://us-vo.org/xml/VOTable.dtd\">\n<VOTABLE version=\"1.0\">\n  <DEFINITIONS>\n    <COOSYS system=\"eq_FK5\" equinox=\"2000\" />\n  </DEFINITIONS>\n    \n  <RESOURCE ID=\"T9001\">\n     <DESCRIPTION>\n       HEASARC Browse data service\n       Please send inquiries to mailto:request@athena.gsfc.nasa.gov\n    </DESCRIPTION>\n    <PARAM ID=\"default_search_radius\" ucd=\"OBS_ANG-SIZE\" datatype=\"double\" \n           value=\"0.0516666666666667\" />\n\n    <TABLE ID=\"heasarc_first_9001\">\n      <DESCRIPTION> Faint Images of the Radio Sky at Twenty cm Source Catalog (FIRST) </DESCRIPTION>\n      \n      <FIELD name=\"unique_id\" datatype=\"char\" arraysize=\"*\"  ucd=\"ID_MAIN\">\n        <DESCRIPTION> Integer key </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"name\" datatype=\"char\" arraysize=\"*\"  >\n        <DESCRIPTION> FIRST Source Designation </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"ra\" datatype=\"double\" unit=\"degree\" ucd=\"POS_EQ_RA_MAIN\">\n        <DESCRIPTION> Right Ascension </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"dec\" datatype=\"double\" unit=\"degree\" ucd=\"POS_EQ_DEC_MAIN\">\n        <DESCRIPTION> Declination </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"flux_20_cm\" datatype=\"double\" unit=\"mJy\" >\n        <DESCRIPTION> Peak 1.4GHz Flux Density (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"flux_20_cm_error\" datatype=\"double\" unit=\"mJy\" >\n        <DESCRIPTION> Estimated rms in at Source (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"int_flux_20_cm\" datatype=\"double\" unit=\"mJy\" >\n\n        <DESCRIPTION> Integrated 1.4GHz Flux Density (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <DATA>\n        <TABLEDATA>\n<TR>\n  <TD>384559</TD><TD>FIRST J120002.6+595708</TD>\n  <TD>180.0110042</TD><TD>59.9523889</TD>\n  <TD>    1.11</TD><TD> 0.139</TD><TD>    1.14</TD>\n</TR>\n<TR>\n  <TD>385094</TD><TD>FIRST J120025.3+600103</TD>\n  <TD>180.1057250</TD><TD>60.0175556</TD>\n  <TD>    2.89</TD><TD> 0.142</TD><TD>    2.56</TD>\n</TR>\n<TR>\n  <TD>384928</TD><TD>FIRST J120018.1+600236</TD>\n  <TD>180.0755500</TD><TD>60.0434750</TD>\n  <TD>   19.38</TD><TD> 0.145</TD><TD>   19.23</TD>\n</TR>\n<TR>\n  <TD>384490</TD><TD>FIRST J115959.4+600403</TD>\n  <TD>179.9978875</TD><TD>60.0677083</TD>\n  <TD>    1.01</TD><TD> 0.147</TD><TD>    1.20</TD>\n</TR>\n        </TABLEDATA>\n      </DATA>\n    </TABLE>\n\n  </RESOURCE>\n</VOTABLE>\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Search Out of Range",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid Parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Cone search",
+        "description": "Perform a simple cone search",
+        "operationId": "search_sync_cone_search_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConeSearchParameters"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/xml;content=x-votable": {
+                "example": "\n<?xml version=\"1.0\"?>\n<!DOCTYPE VOTABLE SYSTEM \"http://us-vo.org/xml/VOTable.dtd\">\n<VOTABLE version=\"1.0\">\n  <DEFINITIONS>\n    <COOSYS system=\"eq_FK5\" equinox=\"2000\" />\n  </DEFINITIONS>\n    \n  <RESOURCE ID=\"T9001\">\n     <DESCRIPTION>\n       HEASARC Browse data service\n       Please send inquiries to mailto:request@athena.gsfc.nasa.gov\n    </DESCRIPTION>\n    <PARAM ID=\"default_search_radius\" ucd=\"OBS_ANG-SIZE\" datatype=\"double\" \n           value=\"0.0516666666666667\" />\n\n    <TABLE ID=\"heasarc_first_9001\">\n      <DESCRIPTION> Faint Images of the Radio Sky at Twenty cm Source Catalog (FIRST) </DESCRIPTION>\n      \n      <FIELD name=\"unique_id\" datatype=\"char\" arraysize=\"*\"  ucd=\"ID_MAIN\">\n        <DESCRIPTION> Integer key </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"name\" datatype=\"char\" arraysize=\"*\"  >\n        <DESCRIPTION> FIRST Source Designation </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"ra\" datatype=\"double\" unit=\"degree\" ucd=\"POS_EQ_RA_MAIN\">\n        <DESCRIPTION> Right Ascension </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"dec\" datatype=\"double\" unit=\"degree\" ucd=\"POS_EQ_DEC_MAIN\">\n        <DESCRIPTION> Declination </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"flux_20_cm\" datatype=\"double\" unit=\"mJy\" >\n        <DESCRIPTION> Peak 1.4GHz Flux Density (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"flux_20_cm_error\" datatype=\"double\" unit=\"mJy\" >\n        <DESCRIPTION> Estimated rms in at Source (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <FIELD name=\"int_flux_20_cm\" datatype=\"double\" unit=\"mJy\" >\n\n        <DESCRIPTION> Integrated 1.4GHz Flux Density (mJy) </DESCRIPTION>\n      </FIELD>\n      \n      <DATA>\n        <TABLEDATA>\n<TR>\n  <TD>384559</TD><TD>FIRST J120002.6+595708</TD>\n  <TD>180.0110042</TD><TD>59.9523889</TD>\n  <TD>    1.11</TD><TD> 0.139</TD><TD>    1.14</TD>\n</TR>\n<TR>\n  <TD>385094</TD><TD>FIRST J120025.3+600103</TD>\n  <TD>180.1057250</TD><TD>60.0175556</TD>\n  <TD>    2.89</TD><TD> 0.142</TD><TD>    2.56</TD>\n</TR>\n<TR>\n  <TD>384928</TD><TD>FIRST J120018.1+600236</TD>\n  <TD>180.0755500</TD><TD>60.0434750</TD>\n  <TD>   19.38</TD><TD> 0.145</TD><TD>   19.23</TD>\n</TR>\n<TR>\n  <TD>384490</TD><TD>FIRST J115959.4+600403</TD>\n  <TD>179.9978875</TD><TD>60.0677083</TD>\n  <TD>    1.01</TD><TD> 0.147</TD><TD>    1.20</TD>\n</TR>\n        </TABLEDATA>\n      </DATA>\n    </TABLE>\n\n  </RESOURCE>\n</VOTABLE>\n"
+              }
+            }
+          },
+          "400": {
+            "description": "Search Out of Range",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid Parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cone-search/jobs": {
+      "get": {
+        "summary": "Cone search job list",
+        "description": "List all existing jobs for the current user. Jobs will be sorted by creation date, with the most recently created listed first.",
+        "operationId": "get_job_list_cone_search_jobs_get",
+        "parameters": [
+          {
+            "name": "phase",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ExecutionPhase"
+              },
+              "nullable": true,
+              "title": "Execution phase",
+              "description": "Limit results to the provided execution phases"
+            },
+            "description": "Limit results to the provided execution phases"
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "nullable": true,
+              "title": "Creation date",
+              "description": "Limit results to jobs created after this date"
+            },
+            "description": "Limit results to jobs created after this date"
+          },
+          {
+            "name": "last",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "title": "Number of jobs",
+              "description": "Return at most the given number of jobs"
+            },
+            "description": "Return at most the given number of jobs"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobDescription"
+                  },
+                  "title": "Response Get Job List Cone Search Jobs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create async cone search job",
+        "operationId": "create_job_cone_search_jobs_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobCreate_ConeSearchParameters_"
+              }
+            }
+          }
+        },
+        "responses": {
+          "303": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cone-search/jobs/{job_id}": {
+      "get": {
+        "summary": "Cone search job details",
+        "operationId": "get_job_cone_search_jobs__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          },
+          {
+            "name": "wait",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Wait for status changes",
+              "description": "Maximum number of seconds to wait or -1 to wait for as long as the server permits",
+              "example": 60
+            },
+            "description": "Maximum number of seconds to wait or -1 to wait for as long as the server permits"
+          },
+          {
+            "name": "phase",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/ExecutionPhase"
+                }
+              ],
+              "title": "Initial phase for waiting",
+              "description": "When waiting for status changes, consider this to be the initial execution phase. If the phase has already changed, return immediately. This parameter should always be provided when wait is used.",
+              "example": "executing"
+            },
+            "description": "When waiting for status changes, consider this to be the initial execution phase. If the phase has already changed, return immediately. This parameter should always be provided when wait is used."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job_ConeSearchParameters_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a cone search job",
+        "operationId": "delete_job_cone_search_jobs__job_id__delete",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a cone search job",
+        "operationId": "patch_job_cone_search_jobs__job_id__patch",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Job_ConeSearchParameters_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cone-search/jobs/{job_id}/start": {
+      "post": {
+        "summary": "Start a cone search job",
+        "operationId": "job_start_cone_search_jobs__job_id__start_post",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobStart"
+              }
+            }
+          }
+        },
+        "responses": {
+          "303": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ConeSearchParameters": {
+        "properties": {
+          "ra": {
+            "type": "number",
+            "title": "Right-ascension",
+            "description": "A right-ascension in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees",
+            "example": 179.5
+          },
+          "dec": {
+            "type": "number",
+            "title": "Declination",
+            "description": "A declination in the ICRS coordinate system for the positon of the center of the cone to search, given in decimal degrees",
+            "example": 59.98
+          },
+          "sr": {
+            "type": "number",
+            "title": "Search radius",
+            "description": "The radius of the cone to search, given in decimal degrees",
+            "example": 0.5
+          },
+          "verb": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Verbosity"
+              }
+            ],
+            "title": "Verbosity",
+            "description": "Choose from `minimum` (minimum columns required to describe the object), `all` (all available columns), or `default` (a useful intermediate number of columns)",
+            "default": "default",
+            "example": "all"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ra",
+          "dec",
+          "sr"
+        ],
+        "title": "ConeSearchParameters",
+        "description": "Parameters for a Simple Cone Search."
+      },
+      "ErrorDetail": {
+        "properties": {
+          "loc": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "nullable": true,
+            "title": "Location",
+            "example": [
+              "area",
+              "field"
+            ]
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message",
+            "example": "Some error messge"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error type",
+            "example": "some_code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "msg",
+          "type"
+        ],
+        "title": "ErrorDetail",
+        "description": "The detail of the error message."
+      },
+      "ErrorModel": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetail"
+            },
+            "type": "array",
+            "title": "Error detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorModel",
+        "description": "A structured API error message."
+      },
+      "ExecutionPhase": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "queued",
+          "executing",
+          "completed",
+          "error",
+          "aborted",
+          "unknown",
+          "held",
+          "suspended",
+          "archived"
+        ],
+        "title": "ExecutionPhase",
+        "description": "Possible execution phases for a UWS job."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "JobCreate_ConeSearchParameters_": {
+        "properties": {
+          "parameters": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ConeSearchParameters"
+              }
+            ],
+            "title": "Parameters of the job"
+          },
+          "start": {
+            "type": "boolean",
+            "title": "Whether to automatically start the job",
+            "default": true
+          },
+          "run_id": {
+            "type": "string",
+            "nullable": true,
+            "title": "Opaque string provided by client",
+            "description": "This field is intended for the client to add a unique identifier to all jobs that are part of a single operation from the perspective of the client. This may aid in tracing issues through a complex system, or identifying which operation a job is part of.",
+            "example": "processing-run-40"
+          }
+        },
+        "type": "object",
+        "required": [
+          "parameters",
+          "run_id"
+        ],
+        "title": "JobCreate[ConeSearchParameters]"
+      },
+      "JobDescription": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Unique identifier",
+            "example": "1478"
+          },
+          "owner": {
+            "type": "string",
+            "title": "Identity of job owner",
+            "example": "rra"
+          },
+          "phase": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExecutionPhase"
+              }
+            ],
+            "title": "Current execution phase",
+            "example": "executing"
+          },
+          "run_id": {
+            "type": "string",
+            "nullable": true,
+            "title": "Opaque string provided by client",
+            "description": "This field is intended for the client to add a unique identifier to all jobs that are part of a single operation from the perspective of the client. This may aid in tracing issues through a complex system, or identifying which operation a job is part of.",
+            "example": "processing-run-40"
+          },
+          "creation_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "When the job was created",
+            "example": "2023-01-13T14:53:00Z"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "owner",
+          "phase",
+          "run_id",
+          "creation_time"
+        ],
+        "title": "JobDescription",
+        "description": "Brief job description used for the job list."
+      },
+      "JobError": {
+        "properties": {
+          "error_code": {
+            "type": "string",
+            "title": "Code for the error",
+            "example": "permission_denied"
+          },
+          "message": {
+            "type": "string",
+            "title": "Brief error message",
+            "example": "Permission denied"
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true,
+            "title": "Extended error message",
+            "example": "No access to backend service"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error_code",
+          "message",
+          "detail"
+        ],
+        "title": "JobError",
+        "description": "Failure information about a job."
+      },
+      "JobResult": {
+        "properties": {
+          "result_id": {
+            "type": "string",
+            "title": "Identifier for the result",
+            "example": "cutout"
+          },
+          "url": {
+            "type": "string",
+            "title": "URL for the result",
+            "description": "User-facing URL that can be retrieved directly by the user. This may be a signed URL or similar temporary-use URL that is different from a persistent internal URL.",
+            "example": "https://example.com/results/bdfeb7b575c50bb5"
+          },
+          "size": {
+            "type": "integer",
+            "nullable": true,
+            "title": "Size of the result in bytes",
+            "example": 517135
+          },
+          "mime_type": {
+            "type": "string",
+            "nullable": true,
+            "title": "MIME type of the result",
+            "example": "application/fits"
+          }
+        },
+        "type": "object",
+        "required": [
+          "result_id",
+          "url",
+          "size",
+          "mime_type"
+        ],
+        "title": "JobResult",
+        "description": "A single result from a job."
+      },
+      "JobStart": {
+        "properties": {
+          "start": {
+            "type": "boolean",
+            "enum": [
+              true
+            ],
+            "title": "Must be true"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start"
+        ],
+        "title": "JobStart",
+        "description": "Body for route to start a job."
+      },
+      "JobUpdate": {
+        "properties": {
+          "destruction_time": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "title": "Time at which job should be destroyed",
+            "description": "At this time, the job will be aborted if it is still running, its results will be deleted, and all record of the job will be discarded.",
+            "example": "2024-03-22T14:53:00Z"
+          },
+          "execution_duration": {
+            "type": "string",
+            "format": "duration",
+            "nullable": true,
+            "title": "Allowed maximum execution duration",
+            "description": "Specified in elapsed wall clock time. If not present, there is no limit. If the job runs for longer than this time period, it will be aborted.",
+            "example": "PT36000S"
+          }
+        },
+        "type": "object",
+        "required": [
+          "destruction_time",
+          "execution_duration"
+        ],
+        "title": "JobUpdate",
+        "description": "Requested update to a job.\n\nOnly these fields of a job can be changed after job creation."
+      },
+      "Job_ConeSearchParameters_": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Unique identifier",
+            "example": "1478"
+          },
+          "owner": {
+            "type": "string",
+            "title": "Identity of job owner",
+            "example": "rra"
+          },
+          "phase": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExecutionPhase"
+              }
+            ],
+            "title": "Current execution phase",
+            "example": "executing"
+          },
+          "run_id": {
+            "type": "string",
+            "nullable": true,
+            "title": "Opaque string provided by client",
+            "description": "This field is intended for the client to add a unique identifier to all jobs that are part of a single operation from the perspective of the client. This may aid in tracing issues through a complex system, or identifying which operation a job is part of.",
+            "example": "processing-run-40"
+          },
+          "creation_time": {
+            "type": "string",
+            "format": "date-time",
+            "title": "When the job was created",
+            "example": "2023-01-13T14:53:00Z"
+          },
+          "start_time": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "title": "When the job started executing",
+            "example": "2024-02-22T14:55:12Z"
+          },
+          "end_time": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "title": "When the job stopped executing",
+            "example": "2024-02-22T15:34:14Z"
+          },
+          "destruction_time": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "title": "Time at which job should be destroyed",
+            "description": "At this time, the job will be aborted if it is still running, its results will be deleted, and all record of the job will be discarded.",
+            "example": "2024-03-22T14:53:00Z"
+          },
+          "execution_duration": {
+            "type": "string",
+            "format": "duration",
+            "nullable": true,
+            "title": "Allowed maximum execution duration",
+            "description": "Specified in elapsed wall clock time. If not present, there is no limit. If the job runs for longer than this time period, it will be aborted.",
+            "example": "PT36000S"
+          },
+          "quote": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "title": "Expected completion time if started now",
+            "description": "If not given, the expected duration of the job is not known. If later than the destruction time, the job is not possible due to resource constraints.",
+            "example": "2023-02-13T14:53:00Z"
+          },
+          "error": {
+            "$ref": "#/components/schemas/JobError",
+            "nullable": true,
+            "title": "Error information"
+          },
+          "parameters": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ConeSearchParameters"
+              }
+            ],
+            "title": "Parameters of the job"
+          },
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/JobResult"
+            },
+            "type": "array",
+            "nullable": true,
+            "title": "Results of the job"
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "owner",
+          "phase",
+          "run_id",
+          "creation_time",
+          "start_time",
+          "end_time",
+          "destruction_time",
+          "execution_duration",
+          "quote",
+          "error",
+          "parameters",
+          "results"
+        ],
+        "title": "Job[ConeSearchParameters]"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Verbosity": {
+        "type": "string",
+        "enum": [
+          "minimum",
+          "default",
+          "all"
+        ],
+        "title": "Verbosity",
+        "description": "Levels of verbosity in a simple cone search response."
+      }
+    }
+  }
+}
