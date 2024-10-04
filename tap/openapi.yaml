@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: prototype TAP-1.2 with user managed tables
-  version: "1.2"
+  #version: "1.2"
   description: |
     This is more or less the current TAP-1.1 standard with some TAP-1.2
     extensions from the CADC/CANFAR youcat service
