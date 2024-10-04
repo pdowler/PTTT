@@ -1,10 +1,16 @@
 get:
     summary: UWS 1.1
     description: async job listing
-    parameters: {}
-    responses: {}
+    parameters:
+    responses:
+        200:
+            $ref: ../components/uws-responses.yaml#/job-listing
+        401:
+            $ref: ../components/std-responses.yaml#/not-authenticated
+        403:
+            $ref: ../components/std-responses.yaml#/permission-denied
 post:
-    summary: TAP table-update 1.2
+    summary: proto - TAP table-update 1.2
     description: TAP asynchronous table update (create UWS Job); can only specify one operation
     parameters:
         - name: TABLE
@@ -25,12 +31,10 @@ post:
           required: false
           schema:
               type: boolean
-        - name: INGEST
-          in: query
-          description: ingest operation; ingest an existing database table into tap_schema
-          required: false
-          schema:
-              type: boolean
     responses:
-        "303":
+        303:
           description: standard UWS redirect to the created job
+        401:
+            $ref: ../components/std-responses.yaml#/not-authenticated
+        403:
+            $ref: ../components/std-responses.yaml#/permission-denied
